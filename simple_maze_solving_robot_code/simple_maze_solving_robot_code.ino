@@ -1,5 +1,5 @@
 // Maze Solving Robot Code
-// 
+//
 // This code is designed to control a maze-solving robot using the Adafruit Motor Shield and three infrared (IR) sensors to detect the robot's surroundings.
 // The robot uses the IR sensors to sense the walls of the maze and determine the appropriate actions, such as moving forward, turning left or right, or performing a U-turn.
 //
@@ -24,10 +24,10 @@ const int frontSensor = A1;  // Front IR sensor pin
 const int rightSensor = A2;  // Right IR sensor pin
 
 // Movement Parameters
-const int forwardSpeed = 150;  // Speed for forward movement
-const int TurningSpeed = 120;  // Speed for turning movements
-const int turnDelay = 50;      // Delay for completing a turn
-const int uTurnDelay = 100;    // Delay for completing a U-turn
+const int forwardSpeed = 120;  // Speed for forward movement
+const int TurningSpeed = 115;  // Speed for turning movements
+const int turnDelay = 25;      // Delay for completing a turn
+const int uTurnDelay = 50;    // Delay for completing a U-turn
 
 void setup() {
   // Configure sensor pins as input
@@ -51,29 +51,38 @@ void loop() {
   // Decision-making based on sensor states
   switch (sensorState) {
     case 0b000:  // No sensors detect a wall
-      uTurn();  // Perform a U-turn
+      uTurn();   // Perform a U-turn
       Serial.println("Stop");
       break;
-    case 0b010:  // Only the front sensor detects a wall
+    case 0b010:       // Only the front sensor detects a wall
       moveForward();  // Move forward
       Serial.println("Move Forward");
       break;
-    case 0b011:  // Front and right sensors detect walls
-    case 0b001:  // Only the right sensor detects a wall
-      turnRight();  // Turn right
-      Serial.println("Turn Right");
-      break;
-    case 0b110:  // Front and left sensors detect walls
-    case 0b100:  // Only the left sensor detects a wall
+    case 0b111:    // All sensors detect walls
       turnLeft();  // Turn left
       Serial.println("Turn Left");
       break;
-    case 0b101:  // Left and right sensors detect walls
-    case 0b111:  // All sensors detect walls
+    case 0b100:    // Only the left sensor detects a wall
+      turnLeft();  // Turn left
+      Serial.println("Turn Left");
+      break;
+    case 0b110:    // Front and left sensors detect walls
+      turnLeft();  // Turn left
+      Serial.println("Turn Left");
+      break;
+    case 0b001:     // Only the right sensor detects a wall
+      turnRight();  // Turn right
+      Serial.println("Turn Right");
+      break;
+    case 0b011:     // Front and right sensors detect walls
+      turnRight();  // Turn right
+      Serial.println("Turn Right");
+      break;
+    case 0b101:      // Left and right sensors detect walls
       stopMotors();  // Stop the motors
       Serial.println("Turn Left");
       break;
-    default:  // Unknown sensor state
+    default:         // Unknown sensor state
       stopMotors();  // Stop the motors as a safety measure
       Serial.println("Unknown State");
       break;
@@ -84,26 +93,26 @@ void loop() {
 void moveForward() {
   motorA.setSpeed(forwardSpeed);  // Set speed for motor A
   motorB.setSpeed(forwardSpeed);  // Set speed for motor B
-  motorA.run(FORWARD);  // Move motor A forward
-  motorB.run(FORWARD);  // Move motor B forward
+  motorA.run(FORWARD);            // Move motor A forward
+  motorB.run(FORWARD);            // Move motor B forward
 }
 
 // Function to turn left
 void turnLeft() {
   motorA.setSpeed(TurningSpeed - 20);  // Reduce speed of motor A for smoother turn
-  motorB.setSpeed(TurningSpeed);      // Set speed for motor B
-  motorA.run(BACKWARD);               // Move motor A backward
-  motorB.run(FORWARD);                // Move motor B forward
-  delay(turnDelay);                   // Delay to complete the turn
+  motorB.setSpeed(TurningSpeed);       // Set speed for motor B
+  motorA.run(BACKWARD);                // Move motor A backward
+  motorB.run(FORWARD);                 // Move motor B forward
+  delay(turnDelay);                    // Delay to complete the turn
 }
 
 // Function to turn right
 void turnRight() {
-  motorA.setSpeed(TurningSpeed);      // Set speed for motor A
-  motorB.setSpeed(TurningSpeed - 20); // Reduce speed of motor B for smoother turn
-  motorA.run(FORWARD);                // Move motor A forward
-  motorB.run(BACKWARD);               // Move motor B backward
-  delay(turnDelay);                   // Delay to complete the turn
+  motorA.setSpeed(TurningSpeed);       // Set speed for motor A
+  motorB.setSpeed(TurningSpeed - 20);  // Reduce speed of motor B for smoother turn
+  motorA.run(FORWARD);                 // Move motor A forward
+  motorB.run(BACKWARD);                // Move motor B backward
+  delay(turnDelay);                    // Delay to complete the turn
 }
 
 // Function to stop the motors
